@@ -13,21 +13,8 @@ import { activityRouter } from "./activity/route.js";
 dotenv.config();
 
 const app = express();
-const allowedOrigins = [/\.vercel\.app$/];
 
-app.use(
-  cors({
-    origin: (origin, cb) => {
-      if (!origin || allowedOrigins.some((o) => o.test(origin))) {
-        cb(null, true);
-      } else {
-        cb(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
-
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
