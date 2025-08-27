@@ -34,7 +34,7 @@ const Sidebar = () => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["organizations"],
     queryFn: async () => {
-      const res = await axios.get("${api_url}/api/org", {
+      const res = await axios.get(`${api_url}/api/org`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -46,7 +46,7 @@ const Sidebar = () => {
   const createOrg = useMutation({
     mutationFn: async (name) => {
       const res = await axios.post(
-        "${api_url}/api/org/newOrg",
+        `${api_url}/api/org/newOrg`,
         {
           name,
           owner: users?.user?.id,

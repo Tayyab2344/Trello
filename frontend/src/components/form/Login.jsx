@@ -30,7 +30,7 @@ const Loginform = () => {
 
   const loginMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axios.post("${api_url}/api/auth/login", formData, {
+      const res = await axios.post(`${api_url}/api/auth/login`, formData, {
         headers: { "Content-Type": "application/json" },
       });
       return res.data;

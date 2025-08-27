@@ -49,7 +49,6 @@ const BoardModal = ({ isOpen, onClose, orgId }) => {
   });
 
   const handleCreateBoard = () => {
-    console.log("Creating board with orgId:", orgId); // Debug log
     if (!orgId) {
       alert(
         "Cannot create board: No organization selected. Please select an organization from the sidebar."

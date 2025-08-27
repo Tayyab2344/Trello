@@ -46,7 +46,7 @@ const Signupform = () => {
     mutationFn: async (formData) => {
       const { confirmpassword, ...payload } = formData;
 
-      const res = await axios.post("${api_url}/api/auth/signup", payload, {
+      const res = await axios.post(`${api_url}/api/auth/signup`, payload, {
         headers: { "Content-Type": "application/json" },
       });
       return res.data;
