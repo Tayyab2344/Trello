@@ -19,18 +19,21 @@ const PORT = process.env.PORT || 4000;
 
 const app = express();
 const httpServer = createServer(app);
+const allowedOrigin =
+  "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: allowedOrigin,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
+app.use(cors({ origin: allowedOrigin, credentials: true }));
+
 initIo(io);
 
-app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
