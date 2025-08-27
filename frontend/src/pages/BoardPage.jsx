@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 const BoardPage = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
-
   const [title, setTitle] = useState("board");
   const [editing, setEditing] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
@@ -18,6 +17,7 @@ const BoardPage = () => {
   const token = user?.token;
   const api_url =
     "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
+
   const { data: board, isLoading: boardLoading } = useQuery({
     queryKey: ["board", id],
     queryFn: async () => {

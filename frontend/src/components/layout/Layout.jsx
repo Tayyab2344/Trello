@@ -9,14 +9,13 @@ import Members from "@/pages/Members";
 import Activities from "../../pages/Activities";
 import Board from "@/pages/Board";
 import BoardPage from "@/pages/BoardPage";
-import { Toaster } from "react-hot-toast"; // ✅ import toaster
+import { Toaster } from "react-hot-toast";
 
 const Layout = () => {
   return (
     <div className="flex flex-col h-screen">
       <Header />
 
-      {/* ✅ Toasts will now show globally */}
       <Toaster position="top-right" reverseOrder={false} />
 
       <Routes>
@@ -33,7 +32,6 @@ const Layout = () => {
           }
         />
 
-        {/* Boards with sidebar */}
         <Route
           path="/org/:orgId/boards"
           element={
@@ -46,7 +44,6 @@ const Layout = () => {
           }
         />
 
-        {/* Overview with sidebar */}
         <Route
           path="/org/:orgId/overview"
           element={
@@ -59,7 +56,6 @@ const Layout = () => {
           }
         />
 
-        {/* Members with sidebar */}
         <Route
           path="/org/:orgId/members"
           element={
@@ -72,7 +68,6 @@ const Layout = () => {
           }
         />
 
-        {/* Activities with sidebar */}
         <Route
           path="/org/:orgId/activities"
           element={
@@ -85,7 +80,6 @@ const Layout = () => {
           }
         />
 
-        {/* Settings with sidebar */}
         <Route
           path="/settings"
           element={
@@ -98,7 +92,6 @@ const Layout = () => {
           }
         />
 
-        {/* BoardPage WITHOUT sidebar (full width) */}
         <Route
           path="/board/:id"
           element={

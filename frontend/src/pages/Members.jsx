@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import socket from "../sockets/socket";
 import toast from "react-hot-toast";
 
 const Members = () => {
@@ -11,8 +10,10 @@ const Members = () => {
   const [email, setEmail] = useState("");
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const api_url =
     "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
+
   const fetchBoards = async () => {
     try {
       const res = await axios.get(`${api_url}/api/boards/org/${orgId}`);
@@ -40,19 +41,9 @@ const Members = () => {
   }, [orgId]);
 
   useEffect(() => {
-    if (!selectedBoard) return;
-
-    console.log("➡️ Joining board room:", selectedBoard);
-    socket.emit("joinBoard", selectedBoard);
-
-    socket.on("boardNotification", (msg) => {
-      toast.success(msg, { icon: "" });
+    if (selectedBoard) {
       fetchMembers(selectedBoard);
-    });
-
-    return () => {
-      socket.off("boardNotification");
-    };
+    }
   }, [selectedBoard]);
 
   const addMember = async (e) => {
@@ -68,11 +59,7 @@ const Members = () => {
 
       toast.success(res.data.message);
       setEmail("");
-
-      socket.emit("notify", {
-        boardId: selectedBoard,
-        message: `A new member was added to ${selectedBoard}`,
-      });
+      fetchMembers(selectedBoard);
     } catch (error) {
       console.error("Error adding member:", error);
       toast.error(error.response?.data?.message || "Error adding member");
@@ -91,10 +78,7 @@ const Members = () => {
         <label className="font-semibold mr-2">Select Board:</label>
         <select
           value={selectedBoard}
-          onChange={(e) => {
-            setSelectedBoard(e.target.value);
-            fetchMembers(e.target.value);
-          }}
+          onChange={(e) => setSelectedBoard(e.target.value)}
           className="px-3 py-2 border rounded-md w-full mt-2"
         >
           <option value="">-- Select a Board --</option>

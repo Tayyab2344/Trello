@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import Board from "./model.js";
 import User from "../auth/model.js";
-import { getIo } from "../sockets/socket.js";
 import { logActivity } from "../activity/controller.js";
 
 export const deleteBoard = async (req, res) => {
@@ -30,25 +29,18 @@ export const deleteBoard = async (req, res) => {
       details: `Deleted board ${deletedBoard.title}`,
     });
 
-    res
-      .status(200)
-      .json({
-        message: "Board deleted successfully",
-        status: true,
-        board: deletedBoard,
-      });
-  } catch (error) {
-    console.error("Error in deleteBoard:", {
-      message: error.message,
-      stack: error.stack,
+    res.status(200).json({
+      message: "Board deleted successfully",
+      status: true,
+      board: deletedBoard,
     });
-    res
-      .status(500)
-      .json({
-        message: "Error deleting board",
-        status: false,
-        error: error.message,
-      });
+  } catch (error) {
+    console.error("Error in deleteBoard:", error);
+    res.status(500).json({
+      message: "Error deleting board",
+      status: false,
+      error: error.message,
+    });
   }
 };
 
@@ -68,17 +60,12 @@ export const getBoardsForOrg = async (req, res) => {
       .status(200)
       .json({ message: "Boards fetched successfully", status: true, boards });
   } catch (error) {
-    console.error("Error in getBoardsForOrg:", {
-      message: error.message,
-      stack: error.stack,
+    console.error("Error in getBoardsForOrg:", error);
+    res.status(500).json({
+      message: "Error fetching boards",
+      status: false,
+      error: error.message,
     });
-    res
-      .status(500)
-      .json({
-        message: "Error fetching boards",
-        status: false,
-        error: error.message,
-      });
   }
 };
 
@@ -106,17 +93,12 @@ export const getBoardById = async (req, res) => {
       .status(200)
       .json({ message: "Board fetched successfully", status: true, board });
   } catch (error) {
-    console.error("Error in getBoardById:", {
-      message: error.message,
-      stack: error.stack,
+    console.error("Error in getBoardById:", error);
+    res.status(500).json({
+      message: "Error fetching board",
+      status: false,
+      error: error.message,
     });
-    res
-      .status(500)
-      .json({
-        message: "Error fetching board",
-        status: false,
-        error: error.message,
-      });
   }
 };
 
@@ -153,25 +135,18 @@ export const updateBoard = async (req, res) => {
       .status(200)
       .json({ message: "Board updated successfully", status: true, board });
   } catch (error) {
-    console.error("Error in updateBoard:", {
-      message: error.message,
-      stack: error.stack,
-    });
+    console.error("Error in updateBoard:", error);
     if (error.code === 11000) {
-      return res
-        .status(400)
-        .json({
-          message: "Board title already exists in this organization",
-          status: false,
-        });
-    }
-    res
-      .status(500)
-      .json({
-        message: "Error updating board",
+      return res.status(400).json({
+        message: "Board title already exists in this organization",
         status: false,
-        error: error.message,
       });
+    }
+    res.status(500).json({
+      message: "Error updating board",
+      status: false,
+      error: error.message,
+    });
   }
 };
 
@@ -190,6 +165,7 @@ export const addMemberByEmail = async (req, res) => {
       organization: orgId,
       title: boardName,
     }).populate("organization", "name");
+
     if (!board) {
       return res
         .status(404)
@@ -204,12 +180,10 @@ export const addMemberByEmail = async (req, res) => {
     }
 
     if (board.members.includes(user._id)) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "User is already a member of this board",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "User is already a member of this board",
+      });
     }
 
     board.members.push(user._id);
@@ -227,30 +201,6 @@ export const addMemberByEmail = async (req, res) => {
       details: `Added ${user.name} (${user.email}) to board ${board.title}`,
     });
 
-    const io = getIo();
-
-    io.to(board._id.toString()).emit("boardNotification", {
-      type: "member_added",
-      message: `${user.name} has been added to ${board.title}`,
-      board: {
-        _id: board._id,
-        title: board.title,
-        organization: board.organization,
-      },
-      newMember: { _id: user._id, name: user.name, email: user.email },
-    });
-
-    io.to(user._id.toString()).emit("newBoardAdded", {
-      board: populatedBoard,
-      message: `You have been added to ${board.title} in ${board.organization.name}`,
-      type: "board_access_granted",
-    });
-
-    const userSockets = await io.in(user._id.toString()).fetchSockets();
-    userSockets.forEach((socket) => {
-      socket.join(board._id.toString());
-    });
-
     return res.status(200).json({
       success: true,
       message: "Member added successfully",
@@ -258,14 +208,12 @@ export const addMemberByEmail = async (req, res) => {
       addedMember: { _id: user._id, name: user.name, email: user.email },
     });
   } catch (error) {
-    console.error("❌ Error in addMemberByEmail:", error);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Error adding member",
-        error: error.message,
-      });
+    console.error("Error in addMemberByEmail:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error adding member",
+      error: error.message,
+    });
   }
 };
 
@@ -306,25 +254,18 @@ export const removeMember = async (req, res) => {
       details: `Removed member ${memberId} from board ${updatedBoard.title}`,
     });
 
-    res
-      .status(200)
-      .json({
-        message: "Member removed successfully",
-        status: true,
-        board: updatedBoard,
-      });
-  } catch (error) {
-    console.error("Error in removeMember:", {
-      message: error.message,
-      stack: error.stack,
+    res.status(200).json({
+      message: "Member removed successfully",
+      status: true,
+      board: updatedBoard,
     });
-    res
-      .status(500)
-      .json({
-        message: "Error removing member",
-        status: false,
-        error: error.message,
-      });
+  } catch (error) {
+    console.error("Error in removeMember:", error);
+    res.status(500).json({
+      message: "Error removing member",
+      status: false,
+      error: error.message,
+    });
   }
 };
 
@@ -365,33 +306,24 @@ export const updateTitle = async (req, res) => {
       details: `Updated board title to ${title}`,
     });
 
-    res
-      .status(200)
-      .json({
-        message: "Title updated successfully",
-        status: true,
-        board: updatedBoard,
-      });
-  } catch (error) {
-    console.error("Error in updateTitle:", {
-      message: error.message,
-      stack: error.stack,
+    res.status(200).json({
+      message: "Title updated successfully",
+      status: true,
+      board: updatedBoard,
     });
+  } catch (error) {
+    console.error("Error in updateTitle:", error);
     if (error.code === 11000) {
-      return res
-        .status(400)
-        .json({
-          message: "Board title already exists in this organization",
-          status: false,
-        });
-    }
-    res
-      .status(500)
-      .json({
-        message: "Error updating title",
+      return res.status(400).json({
+        message: "Board title already exists in this organization",
         status: false,
-        error: error.message,
       });
+    }
+    res.status(500).json({
+      message: "Error updating title",
+      status: false,
+      error: error.message,
+    });
   }
 };
 
@@ -403,6 +335,7 @@ export const getBoardDetails = async (req, res) => {
       organization: orgId,
       title: boardName,
     }).populate("members", "name email");
+
     if (!board) {
       return res.status(404).json({ message: "Board not found" });
     }
@@ -427,24 +360,17 @@ export const getUserBoards = async (req, res) => {
       .populate("owner", "name email")
       .select("_id title image organization members owner createdAt");
 
-    res
-      .status(200)
-      .json({
-        message: "User boards fetched successfully",
-        status: true,
-        boards,
-      });
-  } catch (error) {
-    console.error("Error in getUserBoards:", {
-      message: error.message,
-      stack: error.stack,
+    res.status(200).json({
+      message: "User boards fetched successfully",
+      status: true,
+      boards,
     });
-    res
-      .status(500)
-      .json({
-        message: "Error fetching user boards",
-        status: false,
-        error: error.message,
-      });
+  } catch (error) {
+    console.error("Error in getUserBoards:", error);
+    res.status(500).json({
+      message: "Error fetching user boards",
+      status: false,
+      error: error.message,
+    });
   }
 };

@@ -6,16 +6,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import BoardModal from "../Model/BoardModel";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
-import socket from "../sockets/socket";
 
 const Board = () => {
   const { orgId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const api_url =
     "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,25 +46,6 @@ const Board = () => {
     retry: 1,
     refetchOnWindowFocus: false,
   });
-
-  useEffect(() => {
-    const handleNewBoardAdded = (data) => {
-      if (data.board && data.board.organization === orgId) {
-        queryClient.setQueryData(["boards", orgId], (old = []) => {
-          if (!old.find((b) => b._id === data.board._id)) {
-            return [...old, data.board];
-          }
-          return old;
-        });
-      }
-    };
-
-    socket.on("newBoardAdded", handleNewBoardAdded);
-
-    return () => {
-      socket.off("newBoardAdded", handleNewBoardAdded);
-    };
-  }, [orgId, queryClient]);
 
   useEffect(() => {
     document.title = "Boards | Trello";

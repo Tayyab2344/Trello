@@ -244,7 +244,7 @@ const Sidebar = () => {
                     className="flex items-center space-x-2 px-2 py-1 text-sm rounded-md hover:bg-accent"
                     onClick={() => dispatch(setActiveorgid(org._id))}
                   >
-                    <Settings size={16} />
+                    <FourSquare size={16} />
                     <span>Boards</span>
                   </Link>
                 </div>

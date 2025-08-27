@@ -10,22 +10,21 @@ export const createCard = async (req, res) => {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    // ✅ Find the list to also get its board
     const list = await List.findById(listId);
     if (!list) {
       return res.status(404).json({ message: "List not found" });
     }
 
-    // ✅ Get last card for position
+    n
     const lastCard = await Card.findOne({ list: listId }).sort("-position");
     const position = lastCard ? lastCard.position + 1 : 0;
 
-    // ✅ Create card with board reference from list
+    
     const card = await Card.create({
       title,
       description,
       list: listId,
-      board: list.board, // 👈 this fixes "board required" error
+      board: list.board, 
       position,
     });
 

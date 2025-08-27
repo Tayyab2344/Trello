@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import Organization from "./model.js";
 import Board from "../board/model.js";
 import List from "../list/model.js";
-import { logActivity } from "../activity/controller.js"; // ✅ import logActivity
+import { logActivity } from "../activity/controller.js";
 
 export const createOrganization = async (req, res) => {
   try {
@@ -21,7 +21,6 @@ export const createOrganization = async (req, res) => {
       members: members || [],
     });
 
-    // ✅ Log activity
     await logActivity({
       user: owner,
       organization: newOrg._id,
@@ -69,7 +68,6 @@ export const updateOrganization = async (req, res) => {
       });
     }
 
-    // ✅ Log activity
     await logActivity({
       user: req.user?.id,
       organization: id,
@@ -114,7 +112,6 @@ export const deleteOrganization = async (req, res) => {
     await Board.deleteMany({ organization: id });
     await Organization.findByIdAndDelete(id);
 
-    // ✅ Log activity
     await logActivity({
       user: req.user?.id,
       organization: id,
@@ -184,7 +181,6 @@ export const createBoardForOrg = async (req, res) => {
       .populate("boards")
       .populate("members");
 
-    // ✅ Log activity
     await logActivity({
       user: owner,
       organization: id,
