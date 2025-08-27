@@ -22,7 +22,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -30,7 +30,7 @@ const io = new Server(httpServer, {
 
 initIo(io);
 
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
@@ -46,9 +46,8 @@ io.on("connection", (socket) => {
   socket.on("authenticate", async (userId) => {
     try {
       socket.userId = userId;
-      socket.join(userId); // Join user-specific room for personal notifications
+      socket.join(userId);
 
-      // Auto-join all boards the user is a member of
       const userBoards = await Board.find({
         $or: [{ owner: userId }, { members: userId }],
       }).select("_id title");
