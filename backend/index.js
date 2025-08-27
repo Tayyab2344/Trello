@@ -11,7 +11,6 @@ import { cardRouter } from "./card/route.js";
 import { activityRouter } from "./activity/route.js";
 
 dotenv.config();
-const PORT = process.env.PORT || 4000;
 
 const app = express();
 
@@ -27,6 +26,4 @@ app.use("/api/activities", activityRouter);
 
 mongodbConnection();
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+export default app;
