@@ -15,10 +15,7 @@ const PORT = process.env.PORT || 4000;
 
 const app = express();
 
-const allowedOrigin =
-  "https://trello-drkl-git-main-tayyabs-projects-9d235f55.vercel.app";
-
-app.use(cors({ origin: allowedOrigin, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
