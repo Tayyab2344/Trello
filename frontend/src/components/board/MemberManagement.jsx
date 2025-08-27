@@ -20,7 +20,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import toast from "react-hot-toast";
-import socket from "../../sockets/socket";
 
 const MemberManagement = ({ board, orgId }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,30 +27,18 @@ const MemberManagement = ({ board, orgId }) => {
   const [members, setMembers] = useState(board?.members || []);
   const queryClient = useQueryClient();
 
+  const api_url = import.meta.env.PROD
+    ? "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app"
+    : "http://localhost:4000";
+
   useEffect(() => {
     setMembers(board?.members || []);
   }, [board]);
 
-  // Real-time member updates
-  useEffect(() => {
-    const handleMemberAdded = (notification) => {
-      if (notification.type === "member_added" && notification.board._id === board?._id) {
-        setMembers(prev => [...prev, notification.newMember]);
-        queryClient.invalidateQueries(["boards", orgId]);
-      }
-    };
-
-    socket.on("boardNotification", handleMemberAdded);
-
-    return () => {
-      socket.off("boardNotification", handleMemberAdded);
-    };
-  }, [board?._id, orgId, queryClient]);
-
   const addMemberMutation = useMutation({
     mutationFn: async (memberEmail) => {
       const res = await axios.post(
-        `http://localhost:5000/api/boards/${orgId}/${board.title}/members`,
+        `${api_url}/api/boards/${orgId}/${board.title}/members`,
         { email: memberEmail }
       );
       return res.data;
@@ -71,7 +58,7 @@ const MemberManagement = ({ board, orgId }) => {
   const removeMemberMutation = useMutation({
     mutationFn: async (memberId) => {
       const res = await axios.patch(
-        `http://localhost:5000/api/boards/${board._id}/members/remove`,
+        `${api_url}/api/boards/${board._id}/members/remove`,
         { memberId }
       );
       return res.data;
@@ -82,7 +69,8 @@ const MemberManagement = ({ board, orgId }) => {
       queryClient.invalidateQueries(["boards", orgId]);
     },
     onError: (error) => {
-      const message = error.response?.data?.message || "Failed to remove member";
+      const message =
+        error.response?.data?.message || "Failed to remove member";
       toast.error(message);
     },
   });
@@ -161,7 +149,8 @@ const MemberManagement = ({ board, orgId }) => {
             <CardHeader className="pb-3">
               <CardTitle className="text-sm">Current Members</CardTitle>
               <CardDescription className="text-xs">
-                {members.length} member{members.length !== 1 ? "s" : ""} with access
+                {members.length} member{members.length !== 1 ? "s" : ""} with
+                access
               </CardDescription>
             </CardHeader>
             <CardContent>
