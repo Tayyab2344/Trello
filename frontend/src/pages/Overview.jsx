@@ -10,16 +10,17 @@ const OrgOverview = () => {
   const user = useSelector((state) => state.auth.user);
   const token = user?.token;
   const { orgId } = useParams();
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const { data, isLoading, isError } = useQuery({
     queryKey: ["organization", orgId],
     queryFn: async () => {
       const [orgRes, actRes] = await Promise.all([
-        axios.get(`http://localhost:5000/api/org`, {
+        axios.get(`${api_url}/api/org`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }),
-        axios.get(`http://localhost:5000/api/activities/${orgId}`, {
+        axios.get(`${api_url}/api/activities/${orgId}`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         }),
@@ -28,7 +29,6 @@ const OrgOverview = () => {
       const org = orgRes.data.organizations.find((o) => o._id === orgId);
       const activities = actRes.data.activities.slice(0, 3);
 
-      // collect unique members from org + all boards
       const boardMembers = org.boards?.flatMap((b) => b.members) || [];
       const combinedMembers = [...org.members, ...boardMembers];
       const uniqueMembers = combinedMembers.reduce((acc, m) => {

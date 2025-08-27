@@ -16,7 +16,8 @@ const Board = () => {
   const { orgId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
@@ -34,9 +35,7 @@ const Board = () => {
     queryKey: ["boards", orgId],
     queryFn: async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/boards/org/${orgId}`
-        );
+        const res = await axios.get(`${api_url}/api/boards/org/${orgId}`);
         return res.data.boards;
       } catch (err) {
         if (err.response?.status === 404) {
@@ -50,7 +49,6 @@ const Board = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Real-time board updates
   useEffect(() => {
     const handleNewBoardAdded = (data) => {
       if (data.board && data.board.organization === orgId) {

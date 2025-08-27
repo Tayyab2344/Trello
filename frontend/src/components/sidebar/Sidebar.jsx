@@ -29,10 +29,12 @@ const Sidebar = () => {
   const queryClient = useQueryClient();
   const users = useSelector((state) => state.auth.user);
   const token = users?.token;
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const { data, isLoading, isError } = useQuery({
     queryKey: ["organizations"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:5000/api/org", {
+      const res = await axios.get("${api_url}/api/org", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,7 +46,7 @@ const Sidebar = () => {
   const createOrg = useMutation({
     mutationFn: async (name) => {
       const res = await axios.post(
-        "http://localhost:5000/api/org/newOrg",
+        "${api_url}/api/org/newOrg",
         {
           name,
           owner: users?.user?.id,
@@ -68,7 +70,7 @@ const Sidebar = () => {
 
   const updateOrg = useMutation({
     mutationFn: async ({ id, name }) => {
-      const res = await axios.patch(`http://localhost:5000/api/org/${id}`, {
+      const res = await axios.patch(`${api_url}/api/org/${id}`, {
         name,
       });
       return res.data;
@@ -82,7 +84,7 @@ const Sidebar = () => {
 
   const deleteOrg = useMutation({
     mutationFn: async (id) => {
-      await axios.delete(`http://localhost:5000/api/org/${id}`);
+      await axios.delete(`${api_url}/api/org/${id}`);
     },
     onSuccess: (_, id) => {
       queryClient.invalidateQueries(["organizations"]);

@@ -5,13 +5,13 @@ import { useState } from "react";
 const AddCard = ({ listId, onAdd }) => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const createCard = useMutation({
     mutationFn: async (newTitle) => {
-      const res = await axios.post(
-        `http://localhost:5000/api/card/${listId}/cards`,
-        { title: newTitle }
-      );
+      const res = await axios.post(`${api_url}/api/card/${listId}/cards`, {
+        title: newTitle,
+      });
       return res.data;
     },
     onSuccess: (data) => {

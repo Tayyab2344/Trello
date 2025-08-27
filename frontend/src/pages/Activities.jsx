@@ -5,14 +5,13 @@ import { useParams } from "react-router-dom";
 const Activities = () => {
   const { orgId } = useParams();
   const [activities, setActivities] = useState([]);
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   useEffect(() => {
     document.title = "Activities | Trello";
     const fetchActivities = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/activities/${orgId}`
-        );
+        const res = await axios.get(`${api_url}/api/activities/${orgId}`);
         if (res.data.status) {
           setActivities(res.data.activities);
         }
@@ -34,7 +33,6 @@ const Activities = () => {
             key={activity._id}
             className="flex items-start space-x-3 bg-white p-4 rounded-lg shadow-sm border"
           >
-            {/* Avatar placeholder */}
             <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
               {activity.user?.name?.charAt(0).toUpperCase()}
             </div>

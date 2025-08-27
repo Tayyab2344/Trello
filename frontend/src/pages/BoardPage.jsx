@@ -16,10 +16,12 @@ const BoardPage = () => {
   const [showAddInput, setShowAddInput] = useState(false);
   const user = useSelector((state) => state.auth.user);
   const token = user?.token;
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const { data: board, isLoading: boardLoading } = useQuery({
     queryKey: ["board", id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/api/boards/${id}`, {
+      const res = await axios.get(`${api_url}/api/boards/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -32,7 +34,7 @@ const BoardPage = () => {
   const { data: lists = [], isLoading: listsLoading } = useQuery({
     queryKey: ["lists", id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:5000/api/list/${id}/lists`);
+      const res = await axios.get(`${api_url}/api/list/${id}/lists`);
       return res.data.lists;
     },
     enabled: !!id,
@@ -45,7 +47,7 @@ const BoardPage = () => {
 
   const updateTitle = async () => {
     await axios.patch(
-      `http://localhost:5000/api/boards/${id}/title`,
+      `${api_url}/api/boards/${id}/title`,
       { title },
       {
         headers: {
@@ -68,7 +70,7 @@ const BoardPage = () => {
   const addListMutation = useMutation({
     mutationFn: async (listTitle) => {
       const res = await axios.post(
-        `http://localhost:5000/api/list/${id}/create`,
+        `${api_url}/api/list/${id}/create`,
 
         { title: listTitle },
         {
@@ -88,7 +90,7 @@ const BoardPage = () => {
 
   const deleteListMutation = useMutation({
     mutationFn: async (listId) => {
-      await axios.delete(`http://localhost:5000/api/list/${listId}`, {
+      await axios.delete(`${api_url}/api/list/${listId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -104,7 +106,7 @@ const BoardPage = () => {
     if (!destination) return;
 
     if (type === "list") {
-      await axios.patch(`http://localhost:5000/api/list/reorder`, {
+      await axios.patch(`${api_url}/api/list/reorder`, {
         boardId: id,
         sourceIndex: source.index,
         destinationIndex: destination.index,
@@ -114,7 +116,7 @@ const BoardPage = () => {
     }
 
     if (type === "card") {
-      await axios.put(`http://localhost:5000/api/card/${draggableId}/move`, {
+      await axios.put(`${api_url}/api/card/${draggableId}/move`, {
         sourceListId: source.droppableId,
         destinationListId: destination.droppableId,
         sourceIndex: source.index,

@@ -11,7 +11,8 @@ const BoardModal = ({ isOpen, onClose, orgId }) => {
   const [boardTitle, setBoardTitle] = useState("");
   const users = useSelector((state) => state.auth.user);
   const queryClient = useQueryClient();
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   useEffect(() => {
     if (isOpen) {
       fetch(
@@ -26,7 +27,7 @@ const BoardModal = ({ isOpen, onClose, orgId }) => {
   const createBoardMutation = useMutation({
     mutationFn: async (newBoard) => {
       const res = await axios.post(
-        `http://localhost:5000/api/org/${orgId}/boards`,
+        `${api_url}/api/org/${orgId}/boards`,
         newBoard
       );
       return res.data;

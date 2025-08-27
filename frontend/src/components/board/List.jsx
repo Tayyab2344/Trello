@@ -7,12 +7,12 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 const List = ({ list, index, onDeleteList }) => {
   const listId = list._id || list.id;
   const queryClient = useQueryClient();
-
+const api_url = "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const { data: cards = [], isLoading } = useQuery({
     queryKey: ["cards", listId],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:5000/api/card/${listId}/cards`
+        `${api_url}/api/card/${listId}/cards`
       );
       return res.data.cards || [];
     },
@@ -22,7 +22,7 @@ const List = ({ list, index, onDeleteList }) => {
   const addCardMutation = useMutation({
     mutationFn: async (card) => {
       const res = await axios.post(
-        `http://localhost:5000/api/card/${listId}/cards`,
+        `${api_url}/api/card/${listId}/cards`,
         card
       );
       return res.data.card;
@@ -34,7 +34,7 @@ const List = ({ list, index, onDeleteList }) => {
 
   const deleteCardMutation = useMutation({
     mutationFn: async (cardId) => {
-      await axios.delete(`http://localhost:5000/api/card/${cardId}`);
+      await axios.delete(`${api_url}/api/card/${cardId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["cards", listId]);

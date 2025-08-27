@@ -16,7 +16,8 @@ const schema = z.object({
 const Loginform = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   useEffect(() => {
     document.title = "Login | Trello";
   }, []);
@@ -29,13 +30,9 @@ const Loginform = () => {
 
   const loginMutation = useMutation({
     mutationFn: async (formData) => {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        formData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const res = await axios.post("${api_url}/api/auth/login", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
       return res.data;
     },
     onSuccess: (data) => {

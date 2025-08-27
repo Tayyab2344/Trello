@@ -11,12 +11,11 @@ const Members = () => {
   const [email, setEmail] = useState("");
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  const api_url =
+    "https://trello-7fyi-git-main-tayyabs-projects-9d235f55.vercel.app";
   const fetchBoards = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/boards/org/${orgId}`
-      );
+      const res = await axios.get(`${api_url}/api/boards/org/${orgId}`);
       setBoards(res.data.boards || []);
     } catch (error) {
       console.error("Error fetching boards:", error);
@@ -27,7 +26,7 @@ const Members = () => {
     if (!boardName) return;
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/boards/${orgId}/${boardName}`
+        `${api_url}/api/boards/${orgId}/${boardName}`
       );
       setMembers(res.data.board.members || []);
     } catch (error) {
@@ -47,7 +46,6 @@ const Members = () => {
     socket.emit("joinBoard", selectedBoard);
 
     socket.on("boardNotification", (msg) => {
-      console.log(" Notification received on client:", msg);
       toast.success(msg, { icon: "" });
       fetchMembers(selectedBoard);
     });
@@ -64,17 +62,16 @@ const Members = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/boards/${orgId}/${selectedBoard}/members`,
+        `${api_url}/api/boards/${orgId}/${selectedBoard}/members`,
         { email }
       );
 
       toast.success(res.data.message);
       setEmail("");
 
-      console.log("➡️ Emitting notify for board:", selectedBoard);
       socket.emit("notify", {
         boardId: selectedBoard,
-        message: `📢 A new member was added to ${selectedBoard}`,
+        message: `A new member was added to ${selectedBoard}`,
       });
     } catch (error) {
       console.error("Error adding member:", error);
@@ -90,7 +87,6 @@ const Members = () => {
         👥 Manage Members
       </h2>
 
-      {/* Board Selector */}
       <div className="mb-4">
         <label className="font-semibold mr-2">Select Board:</label>
         <select
